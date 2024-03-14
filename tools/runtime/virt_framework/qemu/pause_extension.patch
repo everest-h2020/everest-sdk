@@ -1,0 +1,346 @@
+From 36850339319beffeb9ac0317b565aa98c0fd32b8 Mon Sep 17 00:00:00 2001
+From: Anna Panagopoulou <anna@virtualopensystems.com>
+Date: Fri, 18 Feb 2022 12:55:42 +0200
+Subject: [PATCH] virtio FPGA: Added initial implementation
+
+Signed-off-by: Anna Panagopoulou <anna@virtualopensystems.com>
+---
+ hw/virtio/Kconfig                            |   5 +
+ hw/virtio/meson.build                        |   2 +
+ hw/virtio/virtio-fpga-pci.c                  |  72 ++++++++++
+ hw/virtio/virtio-fpga.c                      | 143 +++++++++++++++++++
+ include/hw/virtio/virtio-fpga.h              |  29 ++++
+ include/standard-headers/linux/virtio_fpga.h |   7 +
+ include/standard-headers/linux/virtio_ids.h  |   1 +
+ 7 files changed, 259 insertions(+)
+ create mode 100644 hw/virtio/virtio-fpga-pci.c
+ create mode 100644 hw/virtio/virtio-fpga.c
+ create mode 100644 include/hw/virtio/virtio-fpga.h
+ create mode 100644 include/standard-headers/linux/virtio_fpga.h
+
+diff --git a/hw/virtio/Kconfig b/hw/virtio/Kconfig
+index c144d42f9b..0c439c7f3c 100644
+--- a/hw/virtio/Kconfig
++++ b/hw/virtio/Kconfig
+@@ -59,6 +59,11 @@ config VIRTIO_MEM
+     depends on VIRTIO_MEM_SUPPORTED
+     select MEM_DEVICE
+ 
++config VIRTIO_FPGA
++    bool
++    default y
++    depends on VIRTIO
++
+ config VHOST_USER_I2C
+     bool
+     default y
+diff --git a/hw/virtio/meson.build b/hw/virtio/meson.build
+index 521f7d64a8..ea16855150 100644
+--- a/hw/virtio/meson.build
++++ b/hw/virtio/meson.build
+@@ -25,6 +25,7 @@ virtio_ss.add(when: 'CONFIG_VHOST_USER_VSOCK', if_true: files('vhost-user-vsock.
+ virtio_ss.add(when: 'CONFIG_VIRTIO_RNG', if_true: files('virtio-rng.c'))
+ virtio_ss.add(when: 'CONFIG_VIRTIO_IOMMU', if_true: files('virtio-iommu.c'))
+ virtio_ss.add(when: 'CONFIG_VIRTIO_MEM', if_true: files('virtio-mem.c'))
++virtio_ss.add(when: 'CONFIG_VIRTIO_FPGA', if_true: files('virtio-fpga.c'))
+ virtio_ss.add(when: 'CONFIG_VHOST_USER_I2C', if_true: files('vhost-user-i2c.c'))
+ virtio_ss.add(when: ['CONFIG_VIRTIO_PCI', 'CONFIG_VHOST_USER_I2C'], if_true: files('vhost-user-i2c-pci.c'))
+ virtio_ss.add(when: 'CONFIG_VHOST_USER_RNG', if_true: files('vhost-user-rng.c'))
+@@ -49,6 +50,7 @@ virtio_pci_ss.add(when: 'CONFIG_VIRTIO_SERIAL', if_true: files('virtio-serial-pc
+ virtio_pci_ss.add(when: 'CONFIG_VIRTIO_PMEM', if_true: files('virtio-pmem-pci.c'))
+ virtio_pci_ss.add(when: 'CONFIG_VIRTIO_IOMMU', if_true: files('virtio-iommu-pci.c'))
+ virtio_pci_ss.add(when: 'CONFIG_VIRTIO_MEM', if_true: files('virtio-mem-pci.c'))
++virtio_pci_ss.add(when: 'CONFIG_VIRTIO_FPGA', if_true: files('virtio-fpga-pci.c'))
+ 
+ virtio_ss.add_all(when: 'CONFIG_VIRTIO_PCI', if_true: virtio_pci_ss)
+ 
+diff --git a/hw/virtio/virtio-fpga-pci.c b/hw/virtio/virtio-fpga-pci.c
+new file mode 100644
+index 0000000000..db77171e7d
+--- /dev/null
++++ b/hw/virtio/virtio-fpga-pci.c
+@@ -0,0 +1,72 @@
++/*
++ * Virtio FPGA PCI Bindings
++ */
++
++#include "qemu/osdep.h"
++
++#include "virtio-pci.h"
++#include "hw/virtio/virtio-fpga.h"
++#include "qapi/error.h"
++#include "qemu/module.h"
++#include "qom/object.h"
++
++typedef struct VirtIOFpgaPCI VirtIOFpgaPCI;
++
++/*
++ * virtio-fpga-pci: This extends VirtioPCIProxy.
++ */
++#define TYPE_VIRTIO_FPGA_PCI "virtio-fpga-pci-base"
++DECLARE_INSTANCE_CHECKER(VirtIOFpgaPCI, VIRTIO_FPGA_PCI,
++                         TYPE_VIRTIO_FPGA_PCI)
++
++struct VirtIOFpgaPCI {
++    VirtIOPCIProxy parent_obj;
++    VirtIOFPGA vdev;
++};
++
++static void virtio_fpga_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
++{
++    VirtIOFpgaPCI *vfpga = VIRTIO_FPGA_PCI(vpci_dev);
++    DeviceState *vdev = DEVICE(&vfpga->vdev);
++
++    if (!qdev_realize(vdev, BUS(&vpci_dev->bus), errp)) {
++        return;
++    }
++}
++
++static void virtio_fpga_pci_class_init(ObjectClass *klass, void *data)
++{
++    DeviceClass *dc = DEVICE_CLASS(klass);
++    VirtioPCIClass *k = VIRTIO_PCI_CLASS(klass);
++    PCIDeviceClass *pcidev_k = PCI_DEVICE_CLASS(klass);
++
++    k->realize = virtio_fpga_pci_realize;
++    set_bit(DEVICE_CATEGORY_MISC, dc->categories);
++    pcidev_k->class_id = PCI_CLASS_OTHERS;
++}
++
++static void virtio_fpga_initfn(Object *obj)
++{
++    VirtIOFpgaPCI *dev = VIRTIO_FPGA_PCI(obj);
++
++    printf("Instantiate FPGA virtio type\n");
++    virtio_instance_init_common(obj, &dev->vdev, sizeof(dev->vdev),
++                                TYPE_VIRTIO_FPGA);
++}
++
++static const VirtioPCIDeviceTypeInfo virtio_fpga_pci_info = {
++    .base_name             = TYPE_VIRTIO_FPGA_PCI,
++    .generic_name          = "virtio-fpga-pci",
++    .transitional_name     = "virtio-fpga-pci-transitional",
++    .non_transitional_name = "virtio-fpga-pci-non-transitional",
++    .instance_size = sizeof(VirtIOFpgaPCI),
++    .instance_init = virtio_fpga_initfn,
++    .class_init    = virtio_fpga_pci_class_init,
++};
++
++static void virtio_fpga_pci_register(void)
++{
++    virtio_pci_types_register(&virtio_fpga_pci_info);
++}
++
++type_init(virtio_fpga_pci_register)
+diff --git a/hw/virtio/virtio-fpga.c b/hw/virtio/virtio-fpga.c
+new file mode 100644
+index 0000000000..a0e27b569c
+--- /dev/null
++++ b/hw/virtio/virtio-fpga.c
+@@ -0,0 +1,143 @@
++/*
++ * Virtio FPGA Management Support
++ */
++
++#include "qemu/osdep.h"
++#include "qapi/error.h"
++#include "qemu/iov.h"
++#include "qemu/module.h"
++#include "qemu/timer.h"
++#include "hw/virtio/virtio.h"
++#include "hw/qdev-properties.h"
++#include "hw/virtio/virtio-fpga.h"
++#include "sysemu/rng.h"
++#include "sysemu/runstate.h"
++#include "qom/object_interfaces.h"
++#include "trace.h"
++
++static bool is_guest_ready(VirtIOFPGA *vfpga)
++{
++    VirtIODevice *vdev = VIRTIO_DEVICE(vfpga);
++
++    if (virtio_queue_ready(vfpga->vq)
++        && (vdev->status & VIRTIO_CONFIG_S_DRIVER_OK)) {
++        return true;
++    }
++    return false;
++}
++
++static void handle_output(VirtIODevice *vdev, VirtQueue *vq)
++{
++    VirtIOFPGA *vfpga = VIRTIO_FPGA(vdev);
++
++    /* Obtain the bitstream from virqueue */
++    VirtQueueElement *elem;
++
++     if (!is_guest_ready(vfpga)) {
++        return;
++    }
++
++    elem = virtqueue_pop(vfpga->vq, sizeof(VirtQueueElement));
++    if (!elem) {
++        return;
++    }
++
++    unsigned char *bitstream = elem->out_sg[0].iov_base;
++    unsigned char *response = elem->in_sg[0].iov_base;
++    memcpy(response, "Host: Bitstream received", 25);
++    printf("Bistream: %s\n", bitstream);
++    printf("Response: %s\n", response);
++
++    virtqueue_push(vq, elem, 0);
++	virtio_notify(vdev, vq);
++}
++
++static uint64_t get_features(VirtIODevice *vdev, uint64_t f, Error **errp)
++{
++    return f;
++}
++
++static void virtio_fpga_vm_state_change(void *opaque, bool running,
++                                       RunState state)
++{
++    printf("FPGA vm change state\n");
++    // VirtIOFPGA *vfpga = opaque;
++
++
++    // if (running && is_guest_ready(vfpga)) {
++    //     //virtio_fpga_process(vfpga);
++    // }
++}
++
++static void virtio_fpga_set_status(VirtIODevice *vdev, uint8_t status)
++{
++    if (!vdev->vm_running) {
++        return;
++    }
++    vdev->status = status;
++}
++
++static void virtio_fpga_device_realize(DeviceState *dev, Error **errp)
++{
++    VirtIODevice *vdev = VIRTIO_DEVICE(dev);
++    VirtIOFPGA *vfpga = VIRTIO_FPGA(dev);
++
++    virtio_init(vdev, "virtio-fpga", VIRTIO_ID_FPGA, 0);
++
++    vfpga->vq = virtio_add_queue(vdev, 10, handle_output);
++    vfpga->vmstate = qemu_add_vm_change_state_handler(virtio_fpga_vm_state_change,
++                                                     vfpga);
++}
++
++static void virtio_fpga_device_unrealize(DeviceState *dev)
++{
++    VirtIODevice *vdev = VIRTIO_DEVICE(dev);
++    VirtIOFPGA *vfpga = VIRTIO_FPGA(dev);
++
++    qemu_del_vm_change_state_handler(vfpga->vmstate);
++    /* Delete vqueue and clean */
++    virtio_del_queue(vdev, 0);
++    virtio_cleanup(vdev);
++}
++
++static const VMStateDescription vmstate_virtio_fpga = {
++    .name = "virtio-fpga",
++    .minimum_version_id = 1,
++    .version_id = 1,
++    .fields = (VMStateField[]) {
++        VMSTATE_VIRTIO_DEVICE,
++        VMSTATE_END_OF_LIST()
++    },
++};
++
++static Property virtio_fpga_properties[] = {
++    DEFINE_PROP_END_OF_LIST(),
++};
++
++static void virtio_fpga_class_init(ObjectClass *klass, void *data)
++{
++    DeviceClass *dc = DEVICE_CLASS(klass);
++    VirtioDeviceClass *vdc = VIRTIO_DEVICE_CLASS(klass);
++
++    device_class_set_props(dc, virtio_fpga_properties);
++    dc->vmsd = &vmstate_virtio_fpga;
++    set_bit(DEVICE_CATEGORY_MISC, dc->categories);
++    vdc->realize = virtio_fpga_device_realize;
++    vdc->unrealize = virtio_fpga_device_unrealize;
++    vdc->get_features = get_features;
++    vdc->set_status = virtio_fpga_set_status;
++}
++
++static const TypeInfo virtio_fpga_info = {
++    .name = TYPE_VIRTIO_FPGA,
++    .parent = TYPE_VIRTIO_DEVICE,
++    .instance_size = sizeof(VirtIOFPGA),
++    .class_init = virtio_fpga_class_init,
++};
++
++static void virtio_register_types(void)
++{
++    type_register_static(&virtio_fpga_info);
++}
++
++type_init(virtio_register_types)
+diff --git a/include/hw/virtio/virtio-fpga.h b/include/hw/virtio/virtio-fpga.h
+new file mode 100644
+index 0000000000..7875decaa5
+--- /dev/null
++++ b/include/hw/virtio/virtio-fpga.h
+@@ -0,0 +1,29 @@
++/*
++ * Virtio FPGA Management Support
++ */
++
++#ifndef QEMU_VIRTIO_FPGA_H
++#define QEMU_VIRTIO_FPGA_H
++
++#include "hw/virtio/virtio.h"
++/* TODO: Include FPGA manager ? */
++#include "standard-headers/linux/virtio_rng.h"
++#include "qom/object.h"
++
++#define TYPE_VIRTIO_FPGA "virtio-fpga-device"
++OBJECT_DECLARE_SIMPLE_TYPE(VirtIOFPGA, VIRTIO_FPGA)
++#define VIRTIO_FPGA_GET_PARENT_CLASS(obj) \
++        OBJECT_GET_PARENT_CLASS(obj, TYPE_VIRTIO_FPGA)
++
++struct VirtIOFPGA {
++    VirtIODevice parent_obj;
++
++    VirtQueue *vq;
++
++    /* Not sure if I need it. FPGA-related stuff? */
++    //VirtIOFPGAConf conf;
++
++    VMChangeStateEntry *vmstate;
++};
++
++#endif
+diff --git a/include/standard-headers/linux/virtio_fpga.h b/include/standard-headers/linux/virtio_fpga.h
+new file mode 100644
+index 0000000000..4e9af47f04
+--- /dev/null
++++ b/include/standard-headers/linux/virtio_fpga.h
+@@ -0,0 +1,7 @@
++#ifndef _LINUX_VIRTIO_FPGA_H
++#define _LINUX_VIRTIO_FPGA_H
++
++#include "standard-headers/linux/virtio_ids.h"
++#include "standard-headers/linux/virtio_config.h"
++
++#endif /* _LINUX_VIRTIO_FPGA_H */
+diff --git a/include/standard-headers/linux/virtio_ids.h b/include/standard-headers/linux/virtio_ids.h
+index 80d76b75bc..b939508e58 100644
+--- a/include/standard-headers/linux/virtio_ids.h
++++ b/include/standard-headers/linux/virtio_ids.h
+@@ -68,6 +68,7 @@
+ #define VIRTIO_ID_AUDIO_POLICY		39 /* virtio audio policy */
+ #define VIRTIO_ID_BT			40 /* virtio bluetooth */
+ #define VIRTIO_ID_GPIO			41 /* virtio gpio */
++#define VIRTIO_ID_FPGA			42 /* virtio fpga */
+ 
+ /*
+  * Virtio Transitional IDs
+-- 
+2.35.3
+

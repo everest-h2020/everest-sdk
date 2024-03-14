@@ -1,0 +1,4 @@
+*
+!.gitignore
+!get_dependencies.sh
+!set_env.sh
