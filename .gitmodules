@@ -4,3 +4,18 @@
 [submodule "tools/compilation/dosa/dosa"]
 	path = tools/compilation/dosa/dosa
 	url = https://github.com/cloudFPGA/DOSA.git
+[submodule "tools/runtime/margot/brian"]
+	path = tools/runtime/margot/brian
+	url = https://gitlab.com/margot_project/brian.git
+[submodule "tools/runtime/margot/adam"]
+	path = tools/runtime/margot/adam
+	url = https://gitlab.com/margot_project/adam
+[submodule "tools/runtime/margot/theo"]
+	path = tools/runtime/margot/theo
+	url = https://gitlab.com/margot_project/theo.git
+[submodule "tools/runtime/margot/core"]
+	path = tools/runtime/margot/core
+	url = https://gitlab.com/margot_project/core.git
+[submodule "tools/compilation/mnemosyne/mnemosyne"]
+	path = tools/compilation/mnemosyne/mnemosyne
+	url = https://github.com/chrpilat/mnemosyne
