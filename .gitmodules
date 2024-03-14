@@ -1,0 +1,6 @@
+[submodule "tools/compilation/bambu/PandA-bambu"]
+	path = tools/compilation/bambu/PandA-bambu
+	url = https://github.com/ferrandi/PandA-bambu
+[submodule "tools/compilation/dosa/dosa"]
+	path = tools/compilation/dosa/dosa
+	url = https://github.com/cloudFPGA/DOSA.git
