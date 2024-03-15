@@ -22,3 +22,6 @@
 [submodule "tools/compilation/cFDK/cFDK"]
 	path = tools/compilation/cFDK/cFDK
 	url = https://github.com/cloudFPGA/cFDK.git
+[submodule "tools/compilation/olympus/olympus"]
+	path = tools/compilation/olympus/olympus
+	url = https://github.com/StephanieSoldavini/olympus
