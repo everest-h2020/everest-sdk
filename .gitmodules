@@ -19,3 +19,6 @@
 [submodule "tools/compilation/mnemosyne/mnemosyne"]
 	path = tools/compilation/mnemosyne/mnemosyne
 	url = https://github.com/chrpilat/mnemosyne
+[submodule "tools/compilation/cFDK/cFDK"]
+	path = tools/compilation/cFDK/cFDK
+	url = https://github.com/cloudFPGA/cFDK.git
