@@ -65,7 +65,7 @@ cmake --build build --target install -j$CPUCOUNT
 
 rm -rf $CIRCTDIR/build
 
-echo "export PATH=$CIRCTOUT/bin:$LLVMOUT/bin:$PATH" >> set_env.sh
+echo "export PATH=$CIRCTOUT/bin:$LLVMOUT/bin:\$PATH" >> set_env.sh
 
 echo "###############################################################################"
 echo ""
