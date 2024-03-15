@@ -25,3 +25,6 @@
 [submodule "tools/compilation/olympus/olympus"]
 	path = tools/compilation/olympus/olympus
 	url = https://github.com/StephanieSoldavini/olympus
+[submodule "tools/compilation/dfg-mlir/dfg-mlir"]
+	path = tools/compilation/dfg-mlir/dfg-mlir
+	url = https://github.com/Feliix42/dfg-mlir.git
