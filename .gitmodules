@@ -28,3 +28,6 @@
 [submodule "tools/compilation/dfg-mlir/dfg-mlir"]
 	path = tools/compilation/dfg-mlir/dfg-mlir
 	url = https://github.com/Feliix42/dfg-mlir.git
+[submodule "tools/compilation/ohua/condrust"]
+	path = tools/compilation/ohua/condrust
+	url = https://github.com/ohua-lang/condrust
