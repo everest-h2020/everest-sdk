@@ -24,13 +24,4 @@ ESFM is a bash script, hence it does not require any particular installation pro
 Given that requirements are fulfilled, the esfm can just be executed.
 
 ### QDMA-DRIVERS
-The installation process of these drivers is simple and similar to any other driver installation. As mentioned, more details on the related [README](https://code.it4i.cz/everest/qdma_drivers/-/blob/everest/README.md?ref_type=heads).
-
-### QEMU
-The installation process in this case is done following the QEMU manual building process explained in the QEMU documentation at this [link](https://www.qemu.org/docs/master/devel/build-system.html).
-The only thing to be done before starting the building process is to apply the patch present in the qemu folder.
-
-```bash
-cd qemu-code/
-git apply <path/to/patch/pause_extension.patch>
-```
+The installation process of these drivers is simple and similar to any other driver installation. As mentioned, more details on the related [README](https://github.com/virtualopensystems/qdma_drivers://github.com/virtualopensystems/qdma_drivers#).
