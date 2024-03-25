@@ -25,3 +25,6 @@ Given that requirements are fulfilled, the esfm can just be executed.
 
 ### QDMA-DRIVERS
 The installation process of these drivers is simple and similar to any other driver installation. As mentioned, more details on the related [README](https://github.com/virtualopensystems/qdma_drivers://github.com/virtualopensystems/qdma_drivers#).
+
+## Funding
+> This research was supported by the Horizon 2020 EU Research & Innovation programme under GA No 957269 (EVEREST project).
