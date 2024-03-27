@@ -44,3 +44,7 @@
 [submodule "tools/basecamp/basecamp"]
 	path = tools/basecamp/basecamp
 	url = https://github.com/everest-h2020/everest-basecamp.git
+[submodule "tools/compilation/messner/messner"]
+	path = tools/compilation/messner/messner
+	url = git@github.com:everest-h2020/messner.git
+	branch = cfdlang
