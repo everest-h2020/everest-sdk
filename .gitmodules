@@ -48,6 +48,6 @@
 	path = tools/compilation/messner/messner
 	url = git@github.com:everest-h2020/messner.git
 	branch = cfdlang
-[submodule "tools/runtime/multinode/evkit"]
+[submodule "tools/runtime/evkit/evkit"]
 	path = tools/runtime/evkit/evkit
 	url = https://code.it4i.cz/everest/evkit.git
