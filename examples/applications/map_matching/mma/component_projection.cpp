@@ -12,7 +12,6 @@
 #endif
 
 #define __FORCE_INLINE
-#define __attribute__(x) ;
 #include "ac_fixed.h"
 #include "ac_math/ac_sqrt.h"
 #include "ac_math/ac_abs.h"
@@ -201,7 +200,6 @@ projectPointOnSegment(const Coordinate &source, const Coordinate &target,
 
   if (squared == 0)
   {
-      //std::cout << "projection squared=0 no. " << std::endl;
       squared = 0.00001;
   }
 

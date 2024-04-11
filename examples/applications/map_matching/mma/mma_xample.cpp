@@ -20,10 +20,6 @@
 void kernel_projection(CandiVector* cv, const GpsVector& gv,
     const MapCell& map_cell) {
 
-    // orginal version
-    //Projection::projection(cv, gv, map_cell);
-
-    // ohua adapted version
     cv->resize(gv.size());
 
     for (auto im = 0u; im < map_cell.edges.size(); im++)
@@ -164,9 +160,6 @@ int main(int argc, const char* argv[])
         std::cout << "  vertices: " << mapcell[i].vertices.size() << std::endl;
         std::cout << "  edges   : " << mapcell[i].edges.size() << std::endl;
     }
-
-
-
 
     // ---------------------------------------------------
     // processing vectors one by one

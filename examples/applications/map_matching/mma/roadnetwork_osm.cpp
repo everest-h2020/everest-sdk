@@ -37,10 +37,9 @@ const bool gen_optim = false; // generate optimized map graph based on mbox defi
 #define PHASE_NODES 1
 #define PHASE_ROADS 2
 
-// TBD: fix duplication
 #define M_PI 3.14159
-inline double deg2rad(double deg) { return (deg * M_PI / 180.0); }
-inline double rad2deg(double rad) { return (rad * 180 / M_PI); }
+inline double deg2rad(double deg) { return (deg * (M_PI / 180.0)); }
+inline double rad2deg(double rad) { return (rad * (180 / M_PI)); }
 double LLdistanceLL(double lat1, double lon1, double lat2, double lon2) {
     double theta = lon1 - lon2;
     double dist = std::sin(deg2rad(lat1)) * std::sin(deg2rad(lat2)) +
