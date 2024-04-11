@@ -51,3 +51,7 @@
 [submodule "tools/runtime/evkit/evkit"]
 	path = tools/runtime/evkit/evkit
 	url = https://code.it4i.cz/everest/evkit.git
+[submodule "examples/applications/map_matching/etl"]
+	path = examples/applications/map_matching/etl
+	url = https://github.com/ferrandi/etl
+	branch = feature/raw-copyable
