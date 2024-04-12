@@ -3,9 +3,9 @@ Map Matching Example
 
 In this folder, we prepared an example on how to use the EVEREST SDK to accelerate a sub-kernel of a map matching application.
 
-### `Building and testing the software version
+### Building and testing the software version
 
-Compile the application using the provided CMake build:
+Make sure that the etl submodule has been initialized, then compile the application using the provided CMake build:
 
 ```
 mkdir build
