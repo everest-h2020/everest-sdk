@@ -9,7 +9,7 @@
 #include <iostream>
 
 // example execution
-// ./mma_xample -root ../../../ data -map osm_praha_v2/optim3 -fcd fcd/5K_GPS_210920.csv -out output.csv
+// ./mma_xample -root .. -map data/map_o3 -fcd data/fcd_test1.csv -out output.csv
 
 
 #ifndef MAX_MATCH
