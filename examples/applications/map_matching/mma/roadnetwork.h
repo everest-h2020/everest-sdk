@@ -3,12 +3,10 @@
 
 #include "structs.h"
 
-#ifndef __BAMBU__
 #include <string>
 
 #ifdef STATIC
 #include <iostream>
-#endif
 #endif
 
 #ifndef MAX_EDGES
@@ -70,12 +68,10 @@ struct MapCell {
   utils::vector_t<Edge, MAX_EDGES> edges;
   utils::vector_t<Geom, MAX_GEOMS> geoms;
 
-#ifndef __BAMBU__
   id_t add(Vertex &&v) {
 #ifdef STATIC
     if (vertices.full()) {
       std::cerr << "Map cell max vertices reached" << std::endl;
-      throw;
     }
 #endif
     vertices.push_back(v);
@@ -85,10 +81,9 @@ struct MapCell {
   id_t add(Edge &&e) {
     edges.push_back(e);
     id_t e_id = edges.size() - size_t(1);
-#if STATIC
+#ifdef STATIC
     if (vertices.at(e.v_from).edges.full()) {
       std::cerr << "Vertex max edges reached" << std::endl;
-      throw;
     }
 #endif
     vertices.at(e.v_from).edges.push_back(e_id);
@@ -96,20 +91,17 @@ struct MapCell {
   }
 
   id_t add(Geom&& g) {
-#if STATIC
+#ifdef STATIC
       if (geoms.full()) {
           std::cerr << "Map cell max geoms reached" << std::endl;
-          throw;
       }
 #endif
       geoms.push_back(g);
       return geoms.size() - size_t(1);
   }
 
-#endif
 };
 
-#ifndef __BAMBU__
 void read_map(MapCell &mapcell, const std::string &filename);
 void read_map_osm(int mf, MapCell& mapcell, const std::string& vfilename, const std::string& efilename, const GpsRectangle& box);
 void calc_distances(MapCell &mc);
@@ -117,6 +109,5 @@ void vertex_indexation(MapCell &mc);
 int find_vertex(MapCell& jmap, id_g node_id, bool mustfind);
 id_g find_ext_road_id(int id, const MapCell& jmap);
 int get_maxspeed(int id, const MapCell& jmap);
-#endif
 
 #endif

@@ -13,10 +13,17 @@
 
 
 #ifndef MAX_MATCH
-#define MAX_MATCH 100
+#define MAX_MATCH 5
 #endif
 
+#ifdef __BAMBU_SIM__
+#include <mdpi/mdpi_user.h>
+#endif
 
+#pragma HLS interface port = cv mode = m_axi offset = direct bundle = common
+#pragma HLS interface port = gv mode = m_axi offset = direct bundle = common
+#pragma HLS interface port = map_cell mode = m_axi offset = direct bundle = common
+extern "C" __attribute_noinline__ 
 void kernel_projection(CandiVector* cv, const GpsVector& gv,
     const MapCell& map_cell) {
 
@@ -187,6 +194,9 @@ int main(int argc, const char* argv[])
 
         CandiVector cv = {};
 
+        #ifdef __BAMBU_SIM__
+        m_param_alloc(0, sizeof(CandiVector));
+        #endif
         kernel_projection(&cv, gv, mapcell[index]);
 
         bool projection_valid = true;
