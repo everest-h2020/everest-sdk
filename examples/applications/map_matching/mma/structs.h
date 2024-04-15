@@ -18,7 +18,7 @@
 #endif
 
 #ifndef MAX_SGV_SIZE
-#define MAX_SGV_SIZE 20
+#define MAX_SGV_SIZE 80
 #endif
 
 typedef unsigned int id_t;
@@ -77,7 +77,7 @@ struct CandiItem {
   int vertex_to;    // used for debugging
 
   CandiItem()
-      : lat(0), lon(0), road_id(-1), distance(-1), roadlength(-1), pos(-1), tis(-1), 
+      : lat(0), lon(0), road_id(-1), distance(-1), roadlength(-1), pos(-1), tis(-1),
         node_from(-1), node_to(-1), vertex_from(-1), vertex_to(-1), speed(-1) {}
 };
 
@@ -107,11 +107,11 @@ struct RoadSpeed {
   int tis;        // -1 on the interpolated roads
   double pos;     // position of tis referring to segment start; -1 on the interpolated roads
   double speed0;  // measured speed
-  double speed;   // calculated speed 
+  double speed;   // calculated speed
 
   RoadSpeed() : road_id(-1), node_from(-1), node_to(-1), roadlength(-1), tis(-1), pos(-1), speed0(-1), speed(-1) {}
   RoadSpeed(int _road_id, int _node_from, int _node_to, int _roadlength, int _tis, double _pos, int _speed0, int _speed)
-      : road_id(_road_id), node_from(_node_from), node_to(_node_to), roadlength(_roadlength), 
+      : road_id(_road_id), node_from(_node_from), node_to(_node_to), roadlength(_roadlength),
         tis(_tis), pos(_pos), speed0(_speed0), speed(_speed) {}
 };
 

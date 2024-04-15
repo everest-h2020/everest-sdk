@@ -12,6 +12,7 @@
 #endif
 
 #define __FORCE_INLINE
+// #define __attribute__(x) ;
 #include "ac_fixed.h"
 #include "ac_math/ac_sqrt.h"
 #include "ac_math/ac_abs.h"
@@ -128,7 +129,7 @@ void Projection::projection(CandiVector *cv, const GpsVector &gv, const SegVecto
         }
 
   }
-  
+
 }
 
 // Find the closest distance and location between coordinate and the line
@@ -183,8 +184,8 @@ projectPointOnSegment(const Coordinate &source, const Coordinate &target,
   ac_fixed<26, 9, true, AC_TRN, AC_SAT> tlon = target.lon;
   ac_fixed<26, 9, true, AC_TRN, AC_SAT> clat = coordinate.lat;
   ac_fixed<26, 9, true, AC_TRN, AC_SAT> clon = coordinate.lon;
-  ac_fixed<14,-4, true, AC_TRN, AC_SAT> slope1 = tlon - slon; // (0.03 / 0.000005) 
-  ac_fixed<14,-4, true, AC_TRN, AC_SAT> slope2 = tlat - slat; 
+  ac_fixed<14,-4, true, AC_TRN, AC_SAT> slope1 = tlon - slon; // (0.03 / 0.000005)
+  ac_fixed<14,-4, true, AC_TRN, AC_SAT> slope2 = tlat - slat;
   ac_fixed<14,-4, true, AC_TRN, AC_SAT> rel1 = clon - slon;
   ac_fixed<14,-4, true, AC_TRN, AC_SAT> rel2 = clat - slat;
   ac_fixed<26,-8, true, AC_TRN, AC_SAT> unnormed = slope1 * rel1 + slope2 * rel2; // (1e-3 / 1e-10)
@@ -200,6 +201,7 @@ projectPointOnSegment(const Coordinate &source, const Coordinate &target,
 
   if (squared == 0)
   {
+      //std::cout << "projection squared=0 no. " << std::endl;
       squared = 0.00001;
   }
 
