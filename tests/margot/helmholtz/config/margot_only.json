@@ -1,0 +1,76 @@
+{
+	"name": "helmholtz",
+	"version": "1.0",
+	"blocks":
+	[
+		{
+			"name": "block1",
+
+			"monitors":
+			[
+				{
+					"name": "time_monitor",
+					"type": "time",
+					"log": [ "average" ],
+					"constructor": [ "margot::TimeUnit::MICROSECONDS", 1 ]
+				},
+				{
+					"name": "error_monitor",
+					"type": "int",
+					"log": ["average"],
+					"constructor": [1],
+					"stop": [{"error_val": "int"}]
+				}
+			],
+
+
+			"knobs":
+			[
+				{
+					"name": "version",
+					"type": "int",
+					"range": [ 0, 3, 1 ]
+				}
+			],
+
+			"metrics":
+			[
+				{
+					"name": "timing",
+					"type": "double",
+					"distribution": "yes",
+					"observed_by": "time_monitor",
+					"reactive_inertia": 0
+				},
+				{
+					"name": "error",
+					"type": "double",
+					"observed_by": "error_monitor"
+				}
+			],
+
+			"extra-functional_requirements":
+			[
+				{
+					"name":"default",
+					"minimize":
+					{
+						"geometric_mean":
+						[
+							{"timing": 1}
+						]
+					},
+					"subject_to":
+					[
+						{
+							"subject": "error",
+							"comparison": "le",
+							"value": 10,
+							"confidence": 0
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+    "versions": [
+        {
+            "name": "naive",
+            "folder": "naive"
+        },
+        {
+            "name": "fpga",
+            "folder": "fpga",
+            "condition": {
+                "function": "fpga_condition()",
+                "type": "int",
+                "constraint": "[](int i) -> bool {return i != 0;}"
+            }
+        }
+    ]
+}

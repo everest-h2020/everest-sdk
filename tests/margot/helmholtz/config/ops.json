@@ -1,0 +1,38 @@
+{
+	"block1":
+	[
+		{
+			"knobs":
+			{
+				"version": 0
+			},
+			"metrics":
+			{
+				"timing": [6.0, 0.5],
+				"error": 15
+			}
+		},
+		{
+			"knobs":
+			{
+				"version": 1
+			},
+			"metrics":
+			{
+				"timing": [8.0, 0.5],
+				"error": 0
+			}
+		},
+		{
+			"knobs":
+			{
+				"version": 2
+			},
+			"metrics":
+			{
+				"timing": [7.0, 0.5],
+				"error": 15
+			}
+		}
+	]
+}

@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(helmholtz)
+
+find_package (margot_heel_generator REQUIRED)
+
+margot_heel_generate_interface("${CMAKE_CURRENT_SOURCE_DIR}/config/margot.json")
+
+#set(CMAKE_BUILD_TYPE "Debug")
+
+set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(SOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+set(SOURCES 
+    "${SOURCES_DIR}/inverse_helmholtz_gemm.c"
+    "${SOURCES_DIR}/inverse_helmholtz_naive.c"
+    "${SOURCES_DIR}/inverse_helmholtz_nested.c"
+    "${SOURCES_DIR}/operator+margot.cpp"
+)
+
+set(HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+set(HEADERS "${HEADER_DIR}/inverse_helmholtz.h")
+
+add_executable(helmholtz ${HEADERS} ${SOURCES})
+target_include_directories(helmholtz PUBLIC 
+    $<BUILD_INTERFACE:${HEADER_DIR}>)
+target_link_libraries(helmholtz margot::margot_heel_interface)
+target_compile_features(helmholtz PRIVATE cxx_std_17 )
