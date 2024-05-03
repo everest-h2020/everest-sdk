@@ -1,0 +1,32 @@
+{
+    "name": "helmholtz",
+    "input":
+    [
+        {
+            "name": "S",
+            "type": "matrix_t*"            
+        },
+        {
+            "name": "D_inv",
+            "type": "tensor4D_t*"
+        },
+        {
+            "name": "u",
+            "type": "tensor4D_t*"
+        },
+        {
+            "name": "size",
+            "type": "int"
+        }
+    ],
+    "feature":
+    [],
+    "output":
+    [
+        {
+            "name": "r",
+            "type": "tensor4D_t*"
+        }
+    ],
+    "header": "#include \"inverse_helmholtz.h\""
+}

@@ -1,0 +1,116 @@
+{
+	"name": "helmholtz",
+	"version": "1.0",
+	"blocks":
+	[
+		{
+			"name": "block1",
+
+			"monitors":
+			[
+				{
+					"name": "time_monitor",
+					"type": "time",
+					"log": [ "average" ],
+					"constructor": [ "margot::TimeUnit::MICROSECONDS", 1 ]
+				},
+				{
+					"name": "error_monitor",
+					"type": "int",
+					"log": ["average"],
+					"constructor": [1],
+					"stop": [{"error_val": "int"}]
+				}
+			],
+
+
+			"knobs":
+			[
+				{
+					"name": "version",
+					"type": "int",
+					"range": [ 0, 3, 1 ]
+				}
+			],
+
+			"metrics":
+			[
+				{
+					"name": "timing",
+					"type": "double",
+					"distribution": "yes",
+					"observed_by": "time_monitor",
+					"reactive_inertia": 0,
+					"prediction_plugin": "model",
+          			"prediction_parameters": 
+					[
+            			{
+              				"quality_threshold": "{'r2':0.8}"
+            			}
+          			]
+				},
+				{
+					"name": "error",
+					"type": "double",
+					"observed_by": "error_monitor",
+					"prediction_plugin":"model",
+					"prediction_parameters":
+					[
+						{
+							"quality_threshold": "{'r2':0.8}"
+						}
+					]
+				}
+			],
+
+			"agora":
+			{
+				"broker_url": "127.0.0.1:1883",
+				"broker_username": "",
+				"broker_password": "",
+				"broker_qos": 2,
+				"broker_ca": "",
+				"client_cert": "",
+				"client_key": "",
+        		"number_configurations_per_iteration": 20,
+        		"number_observations_per_configuration": 2,
+        		"max_number_iteration": 10,
+				"clustering_plugin": "cluster",
+				"clustering_parameters":
+				[
+					{"algorithm": "kmeans"},
+          			{"num_clusters":1}
+				],
+				"doe_plugin": "doe",
+				"doe_parameters":
+				[
+					{"algorithm": "full-factorial"},
+					{"constraint": "version < 3"}
+				]
+			},
+
+			"extra-functional_requirements":
+			[
+				{
+					"name":"default",
+					"minimize":
+					{
+						"geometric_mean":
+						[
+							{"timing": 1}
+						]
+					},
+					"subject_to":
+					[
+						{
+							"subject": "error",
+							"comparison": "le",
+							"value": 10,
+							"confidence": 0
+						}
+					]
+				}
+			]
+		}
+	]
+}

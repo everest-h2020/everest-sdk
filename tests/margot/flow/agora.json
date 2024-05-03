@@ -1,0 +1,23 @@
+{
+    "broker_url": "10.75.4.60:1883",
+    "broker_username": "",
+    "broker_password": "",
+    "broker_qos": 2,
+    "broker_ca": "",
+    "client_cert": "",
+    "client_key": "",
+    "number_configurations_per_iteration": 20,
+    "number_observations_per_configuration": 2,
+    "max_number_iteration": 10,
+    "clustering_plugin": "cluster",
+    "clustering_parameters":
+    [
+        {"algorithm": "kmeans"},
+        {"num_clusters":1}
+    ],
+    "doe_plugin": "doe",
+    "doe_parameters":
+    [
+        {"algorithm": "full-factorial"}
+    ]
+}

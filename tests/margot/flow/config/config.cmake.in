@@ -1,0 +1,5 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+include(GNUInstallDirs)
+find_dependency(margot_heel_generator REQUIRED)
+include("${CMAKE_CURRENT_LIST_DIR}/helmholtzTargets.cmake")
