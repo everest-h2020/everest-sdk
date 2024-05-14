@@ -18,6 +18,7 @@ The SDK repository is structured as follows:
 - tests: this folder contains small tests that verify if a tool has been installed correctly;
 - tools: this folder contains the SDK tools, further divided into compilation, runtime, services, and basecamp.
 
+
 ## Getting started
 
 ### General configuration
@@ -33,6 +34,11 @@ Each tool provides dedicated installation instructions, and many of them also av
 The EVEREST SDK relies on a specific revision of the MLIR and CIRCT projects.
 The easiest way to obtain and build these is by executing the script `build_mlir.sh`, which will fetch and build both projects.
 Be advised that during the compilation process, up to 150GB of space are required temporarily for build artifacts.
+
+### Basecamp
+
+One way getting started is to use the [tool `basecamp`](https://github.com/everest-h2020/everest-basecamp), which is the facade for most tools of the EVEREST SDK. The SDK is modular in nature and basecamp is a unified interface for these modules. The modular structure could simplify the installation, depending on the use case. 
+Basecamp and its setup instruction can be found under `tools/basecamp`. 
 
 ## Acknowledgements
 
