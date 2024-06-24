@@ -1,5 +1,5 @@
 # evkit
-Distributed runtime for the Everest project.
+Distributed runtime for the Everest project. The EvKit repository is located [here](https://code.it4i.cz/everest/evkit.git).
 
 ## Installation
 Clone this repository recursively:
